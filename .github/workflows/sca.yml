@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Run Trivy vulnerability scanner in repo mode
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        severity: 'HIGH,CRITICAL'
+        ignore-unfixed: true
+        format: 'json'
+        output: 'result.json'
+    - name: Run Trivy in GitHub SBOM mode and submit results to Dependency Snapshots
+      uses: aquasecurity/trivy-action@master
+      with:
+          scan-type: 'fs'
+          format: 'github'
+          output: 'dependency-results.sbom.json'
+          image-ref: '.'
+          github-pat: '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'
